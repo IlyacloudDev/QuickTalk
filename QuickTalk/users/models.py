@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinLengthValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -26,11 +27,33 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    phone_number = PhoneNumberField(verbose_name=_('Phone number'), unique=True)
-    username = models.CharField(verbose_name=_('Username'), max_length=15, blank=True)
-    is_active = models.BooleanField(verbose_name=_('Active'), default=True)
-    is_staff = models.BooleanField(verbose_name=_('Staff status'), default=False)
-    date_joined = models.DateTimeField(verbose_name=_('Date joined'), auto_now_add=True)
+    phone_number = PhoneNumberField(
+        verbose_name=_('Phone number'),
+        unique=True
+        )
+    username = models.CharField(
+        verbose_name=_('Username'),
+        max_length=15,
+        blank=True,
+        validators=[MinLengthValidator(3)]
+        )
+    avatar = models.ImageField(
+        verbose_name=_('Avatar of user'), 
+        upload_to='avatars/', 
+        blank=True,
+        )
+    is_active = models.BooleanField(
+        verbose_name=_('Active'), 
+        default=True
+        )
+    is_staff = models.BooleanField(
+        verbose_name=_('Staff status'), 
+        default=False
+        )
+    date_joined = models.DateTimeField(
+        verbose_name=_('Date joined'),
+          auto_now_add=True
+          )
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []  # Нет дополнительных обязательных полей
