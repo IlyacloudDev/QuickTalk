@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Левая сторона: Форма регистрации -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary p-5" style="border-radius: 10px 0 0 10px;">
+            <form id="registerForm" class="form-signup" method="post" novalidate style="width: 100%;">
+                {% csrf_token %}
+                <h2 class="text-center mb-4">{% trans "Sign Up" %}</h2>
+
+                <!-- Поле для номера телефона -->
+                <div class="form-group mb-3">
+                    <label for="phone_number" class="sr-only">{% trans "Phone Number" %}</label>
+                    <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="{% trans 'Phone Number' %}" required autofocus>
+                    <div class="invalid-feedback" id="phone_number_error" style="display: none;"></div>
+                </div>
+
+                <!-- Поле для пароля -->
+                <div class="form-group mb-3">
+                    <label for="password" class="sr-only">{% trans "Password" %}</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="{% trans 'Password' %}" required>
+                    <div class="invalid-feedback" id="password_error" style="display: none;"></div>
+                </div>
+
+                <!-- Поле для подтверждения пароля -->
+                <div class="form-group mb-3">
+                    <label for="password2" class="sr-only">{% trans "Confirm Password" %}</label>
+                    <input type="password" id="password2" name="password2" class="form-control" placeholder="{% trans 'Confirm Password' %}" required>
+                    <div class="invalid-feedback" id="password2_error" style="display: none;"></div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button id="registerButton" class="btn btn-light btn-lg">{% trans "Sign Up" %}</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Правая сторона: Приветственное сообщение -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 0 10px 10px 0;">
+            <div class="text-white text-center">
+                <h2>{% trans "Welcome Back!" %}</h2>
+                <p>{% trans "To keep connected with us, please login with your personal info." %}</p>
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg">{% trans "Sign In" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.REGISTER_API_URL = "{% url 'api-register' %}"
+    window.LOGIN_PAGE_URL = "{% url 'login' %}"
+</script>
+<script src="{% static 'js/users/register.js' %}"></script>
+{% endblock %}
