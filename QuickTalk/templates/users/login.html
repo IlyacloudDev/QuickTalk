@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Left side: Sign In form -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px 0 0 10px;">
+            <form id="loginForm" class="form-signin" method="post" novalidate style="width: 100%;">
+                {% csrf_token %}
+                <h2 class="text-center mb-4">{% trans "Sign In" %}</h2>
+
+                <!-- Phone number field -->
+                <div class="form-group mb-3">
+                    <label for="phone_number" class="sr-only">{% trans "Phone Number" %}</label>
+                    <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="{% trans 'Phone Number' %}" required autofocus>
+                    <div class="invalid-feedback" id="phone_number_error" style="display: none;"></div>
+                </div>
+
+                <!-- Password field -->
+                <div class="form-group mb-3">
+                    <label for="password" class="sr-only">{% trans "Password" %}</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="{% trans 'Password' %}" required>
+                    <div class="invalid-feedback" id="password_error" style="display: none;"></div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button id="loginButton" class="btn btn-primary btn-lg">{% trans "Sign In" %}</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right side: Sign Up prompt -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary p-5" style="border-radius: 0 10px 10px 0;">
+            <div class="text-white text-center">
+                <h2>{% trans "Hello, Friend!" %}</h2>
+                <p>{% trans "Enter your personal details and start your journey with us." %}</p>
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg">{% trans "Sign Up" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.LOGIN_API_URL = "{% url 'api-login' %}";
+    window.START_URL = "{% url 'start' %}"
+</script>
+<script src="{% static 'js/users/login.js' %}"></script>    
+{% endblock %}
