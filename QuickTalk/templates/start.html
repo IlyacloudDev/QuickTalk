@@ -5,17 +5,14 @@
 
 {% block content %}
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    {% if request.user.is_authenticated %}
     <a href="#" class="btn btn-primary btn-lg" id="start">
         {% trans "Get Started" %}
     </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary btn-lg" id="start">
+        {% trans "Get Started" %}
+    </a>
+    {% endif %}
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-    startedHref = document.getElementById('start')
-    startedHref.addEventListener('click', function(event) {
-        window.location.href = "{% url 'login' %}"
-    })
-</script>
 {% endblock %}
