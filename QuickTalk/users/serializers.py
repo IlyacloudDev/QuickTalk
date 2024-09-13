@@ -48,3 +48,16 @@ class LoginCustomUserSerializer(serializers.Serializer):
         data['user'] = user
         return data
 
+
+class CustomUserProfileSerializer(serializers.ModelSerializer):  # Измените на ModelSerializer
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'avatar']
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        user_own_avatar = validated_data.get('avatar')
+        if user_own_avatar:
+            instance.avatar = user_own_avatar
+        instance.save()
+        return instance
