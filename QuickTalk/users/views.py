@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer
+from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer
 from rest_framework.response import Response
 from django.contrib.auth import login
+from .models import CustomUser
 
 
 class CustomUserCreateAPIView(APIView):
@@ -28,4 +30,23 @@ class CustomUserLoginAPIView(APIView):
             user = serializer.validated_data['user']
             login(request, user)  # Авторизация пользователя
             return Response({"detail": "Successfully logged in."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomUserUpdateAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        try:
+            instance = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "Object does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CustomUserProfileSerializer(instance=instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'detail': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
