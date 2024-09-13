@@ -48,9 +48,9 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     {% if request.user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="#about">{% trans "Profile" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'update-user' %}">{% trans "Profile" %}</a></li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="#about">{% trans "Sign in" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Sign in" %}</a></li>
                     {% endif %}
                 </ul>
             </div>
