@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Левая сторона: Форма редактирования профиля -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px 0 0 10px;">
+            <form method="post"  id="editProfileForm" class="w-100" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <h2 class="text-center mb-4">{% trans "Edit Profile" %}</h2>
+
+                <!-- Выбор аватара -->
+                <div class="form-group mb-4 text-center">
+                    <label for="avatar" class="d-block">{% trans "Choose Avatar" %}</label>
+                    {% if request.user.avatar.url %}
+                        <img src="{{ request.user.avatar.url }}" class="rounded-circle mb-3" alt="{% trans 'Avatar' %}" width="150" height="150">
+                    {% else %}
+                        <img src="{% static 'default_avatar/quicktalk_base-avatar.jpg' %}" class="rounded-circle mb-3" alt="{% trans 'Avatar' %}" width="150" height="150" id="preview_avatar">
+                    {% endif %}
+                    <input type="file" id="avatar" name="avatar" class="form-control-file d-none">
+                    <label for="avatar" class="btn btn-light w-100" id="avatarButton">{% trans "Choose File" %}</label>
+                    <div class="invalid-feedback" id="avatar_error" style="display: none;"></div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="username">{% trans "Edit Username" %}</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="{% trans 'Username' %}" required value="{{ request.user.username }}">
+                    <div class="invalid-feedback" id="username_error" style="display: none;"></div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button id="saveButton" class="btn btn-light btn-lg w-100">{% trans "Save Changes" %}</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Правая сторона: Приветственное сообщение -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary p-5" style="border-radius: 0 10px 10px 0;">
+            <div class="text-white text-center">
+                <h2>{% trans "Welcome Back!" %}</h2>
+                <p>{% trans "Update your profile to keep your information up-to-date." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('avatar');
+        const preview = document.getElementById('preview_avatar')
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+<script>
+    window.UPDATE_API_URL = "{% url 'api-update-user' pk=request.user.id %}"
+    window.START_URL = "{% url 'start' %}"
+</script>
+<script src="{% static 'js/users/update.js' %}"></script>
+{% endblock %}
