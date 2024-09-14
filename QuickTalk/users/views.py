@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer
-from rest_framework.response import Response
 from django.contrib.auth import login
 from .models import CustomUser
 
@@ -35,6 +35,7 @@ class CustomUserLoginAPIView(APIView):
 
 class CustomUserUpdateAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
