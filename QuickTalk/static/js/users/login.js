@@ -58,7 +58,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 passwordInput.classList.add('is-invalid');  // Добавляем красную рамку полю
             }
 
-        } else if (result.detail === "Successfully logged in.") {
+        } else if (result.detail) {
             // Если вход прошёл успешно, перенаправляем пользователя на другую страницу
             window.location.href = window.START_URL;
         }
