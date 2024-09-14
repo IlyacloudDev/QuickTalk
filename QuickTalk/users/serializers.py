@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import CustomUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
+import os
 from phonenumber_field.serializerfields import PhoneNumberField
 
 
@@ -49,7 +50,7 @@ class LoginCustomUserSerializer(serializers.Serializer):
         return data
 
 
-class CustomUserProfileSerializer(serializers.ModelSerializer):  # Измените на ModelSerializer
+class CustomUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'avatar']
@@ -58,6 +59,11 @@ class CustomUserProfileSerializer(serializers.ModelSerializer):  # Измени�
         instance.username = validated_data.get('username', instance.username)
         user_own_avatar = validated_data.get('avatar')
         if user_own_avatar:
-            instance.avatar = user_own_avatar
+            if instance.avatar.path is not None:
+                old_avatar_path = instance.avatar.path
+                instance.avatar = user_own_avatar
+                os.remove(old_avatar_path)
+            else:
+                instance.avatar = user_own_avatar
         instance.save()
         return instance
