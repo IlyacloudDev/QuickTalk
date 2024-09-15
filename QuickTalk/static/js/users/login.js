@@ -2,6 +2,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // Останавливаем стандартное поведение формы (перезагрузку страницы)
     event.preventDefault();
 
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     // Получаем элементы полей ввода
     const phoneNumberInput = document.getElementById('phone_number');
     const passwordInput = document.getElementById('password');
@@ -23,7 +25,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         method: 'POST',                // Метод POST для отправки данных
         headers: {
             'Content-Type': 'application/json',  // Формат данных JSON
-            'X-CSRFToken': '{{ csrf_token }}'    // Добавляем CSRF токен для защиты
+            'X-CSRFToken': csrfToken   // Добавляем CSRF токен для защиты
         },
         body: JSON.stringify(data)  // Преобразуем данные в формат JSON
     })
