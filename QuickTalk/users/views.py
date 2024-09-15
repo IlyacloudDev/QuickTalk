@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer
 from django.contrib.auth import login
+from django.contrib.auth import logout
 from .models import CustomUser
 
 
@@ -33,6 +34,14 @@ class CustomUserLoginAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CustomUserLogoutAPIView(APIView):
+    def post(self, request):
+        # Завершение сессии
+        logout(request)
+        # Возвращаем успешный ответ
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
 class CustomUserUpdateAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
@@ -51,3 +60,4 @@ class CustomUserUpdateAPIView(APIView):
             serializer.save()
             return Response({'detail': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
