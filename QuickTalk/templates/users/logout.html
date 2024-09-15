@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Левая сторона: Выход из системы -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px 0 0 10px;">
+            <div style="width: 100%;">
+                <h2 class="text-center mb-4">{% trans "Goodbye" %}</h2>
+                <p class="text-center mb-4">{% trans "We hope to see you soon!" %}</p>
+
+                <div class="d-flex justify-content-center">
+                    <form id="logoutForm" method="post">
+                        {% csrf_token %}
+                        <button id="logoutButton" class="btn btn-primary btn-lg">{% trans "Log Out" %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая сторона: Приветственное сообщение -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary p-5" style="border-radius: 0 10px 10px 0;">
+            <div class="text-white text-center">
+                <h2>{% trans "Are you sure you want to sign out?" %}</h2>
+                <p class="text-center mb-4">{% trans "You can return to profile" %}</p>
+                <a href="{% url 'start' %}" class="btn btn-light btn-lg">{% trans "Return to profile" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.LOGOUT_API_URL = "{% url 'api-logout' %}";
+    window.START_URL = "{% url 'start' %}";
+</script>
+<script src="{% static 'js/users/logout.js' %}"></script>
+{% endblock %}
