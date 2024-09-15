@@ -34,7 +34,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
         verbose_name=_('Username'),
         max_length=15,
-        blank=True,
+        blank=False,
         validators=[MinLengthValidator(3)]
         )
     avatar = models.ImageField(
