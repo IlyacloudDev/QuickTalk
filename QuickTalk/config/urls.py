@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/', TemplateView.as_view(template_name='users/login.html'), name='login'),
     path('register/', TemplateView.as_view(template_name='users/register.html'), name='register'),
     path('update-user/', TemplateView.as_view(template_name='users/update.html'), name='update-user'),
+    path('logout/', TemplateView.as_view(template_name='users/logout.html'), name='logout'),
 
     path('api/users/', include('users.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
