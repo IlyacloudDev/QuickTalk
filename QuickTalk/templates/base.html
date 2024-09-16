@@ -48,12 +48,27 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     {% if request.user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'update-user' %}">{% trans "Profile" %}</a></li>
+                        <!-- Аватар и выпадающее меню -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <!-- Выводим аватар пользователя -->
+                                {% if request.user.avatar %}
+                                    <img src="{{ request.user.avatar.url }}" alt="Avatar" class="rounded-circle" style="width: 60px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'default_avatar/quicktalk_base-avatar.jpg' %}" alt="Avatar" class="rounded-circle" style="width: 60px; object-fit: cover;">
+                                {% endif %}    
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'update-user' %}">{% trans "Edit Profile" %}</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Sign in" %}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans "Sign in" %}</a></li>
                     {% endif %}
                 </ul>
-            </div>
+            </div>            
         </div>
     </nav>
 
