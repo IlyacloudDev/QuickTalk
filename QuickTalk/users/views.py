@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer
 from django.contrib.auth import login
 from django.contrib.auth import logout
+from .permissions import IsOwner
 from .models import CustomUser
 
 
@@ -44,7 +45,7 @@ class CustomUserLogoutAPIView(APIView):
 
 class CustomUserUpdateAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
