@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from django.core.validators import MinLengthValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -10,11 +11,36 @@ class Chat(models.Model):
         ('group', _('Group')),
     ]
     
-    type = models.CharField(max_length=10, choices=CHAT_TYPES, verbose_name=_('Type'))
-    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='created_chats', verbose_name=_('Created by'))
-    users = models.ManyToManyField(CustomUser, related_name='chats', verbose_name=_('Users'))
-    name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Name'))  # Только для групповых чатов
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    type = models.CharField(
+        verbose_name=_('Type'),
+        max_length=10, 
+        choices=CHAT_TYPES, 
+        )
+    created_by = models.ForeignKey(
+        CustomUser, 
+        verbose_name=_('Created by'),
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name='created_chats', 
+        )
+    users = models.ManyToManyField(
+        CustomUser, 
+        verbose_name=_('Users'),
+        related_name='chats', 
+        )
+    name = models.CharField(
+        verbose_name=_('Name'), 
+        max_length=30, 
+        blank=False, 
+        null=True, 
+        validators=[MinLengthValidator(3)]
+        )  
+    created_at = models.DateTimeField(
+        verbose_name=_('Created at'),
+        auto_now_add=True, 
+        
+        )
 
     def clean(self):
         """Проверка на наличие уже существующего личного чата между пользователями."""
@@ -31,8 +57,19 @@ class Chat(models.Model):
                 raise ValidationError(_("A personal chat can only be between two users."))
 
     def save(self, *args, **kwargs):
-        """Переопределение сохранения с предварительной валидацией."""
-        self.full_clean()  # Вызываем метод clean для валидации перед сохранением
+        """Переопределение сохранения с предварительной валидацией и автоматической установкой имени для личных чатов."""
+        self.full_clean()  # Валидация перед сохранением
+
+        # Проверка, что чат персональный и имя не установлено
+        if self.type == 'personal' and not self.name:
+            # Получаем пользователей чата
+            users_in_chat = list(self.users.all())
+            if len(users_in_chat) == 2:
+                user1, user2 = users_in_chat
+                # Создаем имя чата на основе идентификаторов пользователей
+                sorted_user_ids = sorted([user1.id, user2.id])  # Чтобы порядок был одинаковым
+                self.name = f'chat_{sorted_user_ids[0]}_{sorted_user_ids[1]}'
+
         super().save(*args, **kwargs)
 
     def get_chat_name(self, current_user):
@@ -57,10 +94,24 @@ class Chat(models.Model):
 
 
 class Message(models.Model):
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages', verbose_name=_('Chat'))
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name=_('Sender'))
-    content = models.TextField(verbose_name=_('Content'))  # Поле для хранения текста сообщения
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))  # Автоматическое добавление времени отправки
+    chat = models.ForeignKey(
+        Chat, 
+        on_delete=models.CASCADE, 
+        related_name='messages', 
+        verbose_name=_('Chat')
+        )
+    sender = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        verbose_name=_('Sender')
+        )
+    content = models.TextField(
+        verbose_name=_('Content')
+        )  # Поле для хранения текста сообщения
+    timestamp = models.DateTimeField(
+        auto_now_add=True, 
+        verbose_name=_('Timestamp')
+        )  # Автоматическое добавление времени отправки
 
     class Meta:
         ordering = ['timestamp']  # Сообщения будут сортироваться по времени отправки
