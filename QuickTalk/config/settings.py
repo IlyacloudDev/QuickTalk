@@ -48,7 +48,11 @@ INSTALLED_APPS = [
     'chats',
 
     'rest_framework',
+    'channels',
 ]
+
+
+ASGI_APPLICATION = 'config.asgi.application'
 
 
 SITE_ID = 1
@@ -81,8 +85,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -150,3 +152,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
