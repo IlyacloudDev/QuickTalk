@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Your Chats" %}{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh; max-width: 80%; width: 100%;">
+    <div class="row w-75">
+        <!-- Централизованный список чатов -->
+        <div class="col-lg-10 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px; width: 100%;">
+            <div id="chatListContainer" style="width: 100%;">
+                <h2 class="text-center mb-4">{% trans "Your Chats" %}</h2>
+
+                <!-- Иконки под заголовком -->
+                <div class="text-center mb-4">
+                    <a href="{% url 'create-group-chat' %}" title="{% trans 'Create new group chat' %}" class="btn btn-light">
+                        <i class="fa-solid fa-plus"></i> {% trans 'Create Group Chat' %}
+                    </a>
+                    <a href="{% url 'search-user' %}" title="{% trans 'Search users by phone number' %}" class="btn btn-light ml-3">
+                        <i class="fa-solid fa-magnifying-glass"></i> {% trans 'Search Users' %}
+                    </a>
+                </div>
+
+                <!-- Список чатов будет динамически загружаться сюда -->
+                <div id="chatList" class="list-group">
+                    <!-- Chat items will be added by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.CHAT_LIST_API_URL = "{% url 'api-chats-list' %}";
+</script>
+<script src="{% static 'js/chats/chats-list.js' %}"></script>
+{% endblock %}
