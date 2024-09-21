@@ -17,7 +17,7 @@ class RegisterCustomUserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Проверяем, что два пароля совпадают
         if data.get('password') != data.get('password2'):
-            raise serializers.ValidationError({"password": "Passwords do not match."})
+            raise serializers.ValidationError({"password": _("Passwords do not match."), "password2": _("Passwords do not match.")})
         return data
 
     def create(self, validated_data):
@@ -42,14 +42,24 @@ class LoginCustomUserSerializer(serializers.Serializer):
         if phone_number and password:
             user = authenticate(phone_number=phone_number, password=password)
             if user is None:
-                raise serializers.ValidationError(_('Invalid phone number or password'))
+                raise serializers.ValidationError({"phone_number": _('Invalid phone number or password'), "password": _('Invalid phone number or password')})
         else:
-            raise serializers.ValidationError(_('Both fields are required'))
+            raise serializers.ValidationError({"phone_number": _('Both fields are required'), "password": _('Both fields are required')})
 
         data['user'] = user
         return data
 
 
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'avatar', 'phone_number', 'id']
+
+
+class CustomUserSearchSerializer(serializers.Serializer):
+    phone_number = PhoneNumberField(required=True)
+
+            
 class CustomUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -59,7 +69,7 @@ class CustomUserProfileSerializer(serializers.ModelSerializer):
         instance.username = validated_data.get('username', instance.username)
         user_own_avatar = validated_data.get('avatar')
         if user_own_avatar:
-            if instance.avatar.path is not None:
+            if instance.avatar:
                 old_avatar_path = instance.avatar.path
                 instance.avatar = user_own_avatar
                 os.remove(old_avatar_path)
