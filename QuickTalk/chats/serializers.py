@@ -22,3 +22,10 @@ class CreateGroupChatSerializer(serializers.ModelSerializer):
         # Добавляем создателя в список пользователей чата
         chat.users.add(request_user)
         return chat
+    
+
+class ChatsListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['name', 'type']
+        
