@@ -3,7 +3,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer
+from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer, CustomUserSearchSerializer, CustomUserSerializer
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from .permissions import IsOwner
@@ -28,7 +28,7 @@ class CustomUserCreateAPIView(APIView):
 class CustomUserLoginAPIView(APIView):
     def post(self, request):
         serializer = LoginCustomUserSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             user = serializer.validated_data['user']
             login(request, user)  # Авторизация пользователя
             return Response({"detail": "Successfully logged in."}, status=status.HTTP_200_OK)
@@ -41,6 +41,25 @@ class CustomUserLogoutAPIView(APIView):
         logout(request)
         # Возвращаем успешный ответ
         return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
+class CustomUserSearchAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CustomUserSearchSerializer(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+            try:
+                instance = CustomUser.objects.get(phone_number=phone_number)
+                instance_serializer = CustomUserSerializer(instance).data
+            except CustomUser.DoesNotExist:
+                return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            if not instance_serializer['avatar']:
+                instance_serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
+        
+            return Response({'detail': instance_serializer})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomUserUpdateAPIView(APIView):
