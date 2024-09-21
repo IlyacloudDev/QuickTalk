@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Search User" %}{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row w-50">
+        <div class="col-lg-12 d-flex flex-column align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px;">
+            <form id="searchUserByPhoneForm" class="form-group" method="post" novalidate style="width: 100%;">
+                {% csrf_token %}
+                <h2 class="text-center mb-4">{% trans "Search User" %}</h2>
+
+                <!-- Поле для ввода номера телефона -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="user_phone" placeholder="Enter phone...">
+                    <button id="createGroupChatButton" class="btn btn-primary btn-lg"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
+            </form>
+            <div id="userItem" class="list-group w-100">
+                <!-- User items will be added by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.SEARCH_API_USER = "{% url 'api-search-user' %}"
+</script>
+<script src="{% static 'js/users/search.js' %}"></script>
+{% endblock %}
