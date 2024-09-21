@@ -6,7 +6,7 @@
 {% block content %}
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     {% if request.user.is_authenticated %}
-    <a href="#" class="btn btn-primary btn-lg" id="start">
+    <a href="{% url 'chats-list' %}" class="btn btn-primary btn-lg" id="start">
         {% trans "Get Started" %}
     </a>
     {% else %}
