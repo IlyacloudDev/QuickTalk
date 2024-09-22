@@ -30,6 +30,7 @@ urlpatterns = [
     path('update-user/', TemplateView.as_view(template_name='users/update.html'), name='update-user'),
     path('logout/', TemplateView.as_view(template_name='users/logout.html'), name='logout'),
     path('search/', TemplateView.as_view(template_name='users/search.html'), name='search-user'),
+    path('detail-user/', TemplateView.as_view(template_name='users/detail.html'), name='detail-user'),
 
     path('create-group-chat/', TemplateView.as_view(template_name='chats/create_group_chat.html'), name='create-group-chat'),
     path('chats-list/', TemplateView.as_view(template_name='chats/chats_list.html'), name='chats-list'),
