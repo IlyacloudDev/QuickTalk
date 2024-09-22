@@ -45,8 +45,10 @@ document.getElementById('searchUserByPhoneForm').addEventListener('submit', func
         } else if (result.error === "Object does not exist.") {
             userItemContainer.innerHTML = '<p class="text-center text-white">There is no user with such a phone number</p>';
         } else if (result.detail) {
+            sessionStorage.setItem('userId', result.detail.id)
+
             const userItem = document.createElement('a');
-            userItem.href = '#';
+            userItem.href = window.DETAIL_USER;
             userItem.className = 'btn btn-primary btn-lg mb-3 d-flex flex-column justify-content-center';
             userItem.style.width = '100%';
             userItem.style.height = '70px';
