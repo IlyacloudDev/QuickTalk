@@ -81,3 +81,19 @@ class CustomUserUpdateAPIView(APIView):
             return Response({'detail': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class CustomUserDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        try:
+            instance = CustomUser.objects.get(pk=pk)
+            instance_serializer = CustomUserSerializer(instance).data
+        except CustomUser.DoesNotExist:
+            return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        if not instance_serializer['avatar']:
+            instance_serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
+        return Response({'detail': instance_serializer})
