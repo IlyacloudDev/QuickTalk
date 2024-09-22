@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Добавляем flexbox для масштабируемого отступа
                     chatItem.innerHTML = `
                         <div class="d-flex flex-column">
-                            <span class="text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${chat.name}</span>
+                            <span class="text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${chat.chat_name}</span>
                             <small class="text-white-50" style="margin-top: auto;">
                                 <i class="fa-solid fa-people-group"></i>
                                 <span style="margin-left: 5px;">${chat.type} chat</span> <!-- Отступ между иконкой и текстом -->
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (chat.type === 'personal'){
                     chatItem.innerHTML = `
                         <div class="d-flex flex-column">
-                            <span class="text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${chat.name}</span>
+                            <span class="text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${chat.chat_name}</span>
                             <small class="text-white-50" style="margin-top: auto;">
                                 <i class="fa-solid fa-user-group"></i>
                                 <span style="margin-left: 5px;">${chat.type} chat</span> <!-- Отступ между иконкой и текстом -->
