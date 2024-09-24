@@ -51,6 +51,9 @@ class Chat(models.Model):
                 return str(other_user.phone_number)  # Отображаем номер телефона собеседника
         return self.name  # Для групповых чатов возвращаем имя, если оно установлено
 
+    def get_messages(self):
+        return self.messages.all().order_by('-timestamp')
+
     def can_edit_or_delete(self, user):
         """Проверяет, может ли пользователь редактировать или удалять чат."""
         if self.type == 'group' and self.created_by == user:
