@@ -64,11 +64,16 @@ class CreatePersonalChatSerializer(serializers.ModelSerializer):
 
 class ChatsListSerializer(serializers.ModelSerializer):
     chat_name = serializers.SerializerMethodField()
+    messages_of_chat = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ['chat_name', 'type']  # 'chat_name' вместо 'name'
+        fields = ['chat_name', 'messages_of_chat', 'type', 'id']  # 'chat_name' вместо 'name'
 
     def get_chat_name(self, obj):
         user = self.context['request'].user  # Получаем текущего пользователя из контекста
         return obj.get_chat_name(user)  # Используем метод модели для получения имени или номера телефона
+    
+    def get_messages_of_chat(self, obj):
+        return obj.get_messages()
+
