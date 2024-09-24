@@ -88,7 +88,7 @@ class CustomUserDetailAPIView(APIView):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
         if not pk:
-            return Response({"error": "Method PUT not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"error": "Method GET not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             instance = CustomUser.objects.get(pk=pk)
             instance_serializer = CustomUserSerializer(instance).data
