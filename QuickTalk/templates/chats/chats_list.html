@@ -35,6 +35,7 @@
 {% block extra_scripts %}
 <script>
     window.CHAT_LIST_API_URL = "{% url 'api-chats-list' %}";
+    window.DETAIL_CHAT = "{% url 'detail-chat' %}"
 </script>
 <script src="{% static 'js/chats/chats-list.js' %}"></script>
 {% endblock %}
