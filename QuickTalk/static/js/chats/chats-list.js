@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
             data.forEach(chat => {
                 // Создаем элемент для каждого чата
                 const chatItem = document.createElement('a');
-                chatItem.href = '#'; // Ссылка на конкретный чат
+                chatItem.href = window.DETAIL_CHAT; // Ссылка на конкретный чат
                 chatItem.className = 'btn btn-primary btn-lg mb-3 d-flex flex-column justify-content-center'; // Используем flex-column для вертикального выравнивания
-
+                chatItem.id = `chat-${chat.id}`;
                 // Задание фиксированных размеров
                 chatItem.style.width = '100%'; // Ширина 100% контейнера
                 chatItem.style.height = '70px'; // Фиксированная высота
@@ -49,6 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Добавляем элемент в контейнер
                 chatListContainer.appendChild(chatItem);
+                chatItem.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    // Устанавливаем в sessionStorage id чата
+                    sessionStorage.setItem('selectedChatId', chat.id);
+                    // Переходим на страницу детализации чата
+                    window.location.href = window.DETAIL_CHAT;
+                });
             });
         }
     })
