@@ -34,6 +34,7 @@ urlpatterns = [
 
     path('create-group-chat/', TemplateView.as_view(template_name='chats/create_group_chat.html'), name='create-group-chat'),
     path('chats-list/', TemplateView.as_view(template_name='chats/chats_list.html'), name='chats-list'),
+    path('detail-chat/', TemplateView.as_view(template_name='chats/detail.html'), name='detail-chat'),
 
     path('api/users/', include('users.urls')),
     path('api/chats/', include('chats.urls')),
