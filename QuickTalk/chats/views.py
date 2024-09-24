@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CreateGroupChatSerializer, ChatsListSerializer, CreatePersonalChatSerializer
 from .models import Chat
+from users.permissions import IsOwner
 
 
 class CreateGroupChatAPIView(APIView):
@@ -45,4 +46,19 @@ class ChatsListAPIView(APIView):
         chats = Chat.objects.filter(users=user).order_by('-created_at')
         serializer = ChatsListSerializer(chats, many=True, context={'request': request})
         return Response(serializer.data)
+    
+
+class ChatDetailAPIView(APIView):
+    parser_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method GET not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        try:
+            instance = Chat.objects.get(pk=pk)
+            instance_serializer = ChatsListSerializer(instance, context={'request': request}).data
+        except Chat.DoesNotExist:
+            return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': instance_serializer})
     
