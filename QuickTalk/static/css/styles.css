@@ -11201,3 +11201,29 @@ body {
 .footer {
   padding: 5rem 0;
 }
+
+
+/* custom styles for messages */
+.message-container {
+  max-width: 60%; /* ограничивает ширину сообщения */
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
+  word-wrap: break-word;
+}
+
+.message-sender {
+  background-color: #64a19d; /* цвет для отправленных сообщений */
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right; /* выравнивание текста справа */
+}
+
+.message-receiver {
+  background-color: #fff; /* цвет для полученных сообщений */
+  color: #000;
+  align-self: flex-start;
+  margin-right: auto;
+  text-align: left; /* выравнивание текста слева */
+}
+
