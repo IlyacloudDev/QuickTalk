@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Chat
+from .models import Chat, Message
 from users.models import CustomUser
 from django.utils.translation import gettext_lazy as _
 
@@ -62,6 +62,17 @@ class CreatePersonalChatSerializer(serializers.ModelSerializer):
         return chat
 
 
+class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.SerializerMethodField()
+    class Meta:
+        model = Message
+        fields = ['id', 'content', 'timestamp', 'sender', 'sender_username']
+
+    def get_sender_username(self, obj):
+        return obj.get_sender_username()
+
+
+
 class ChatsListSerializer(serializers.ModelSerializer):
     chat_name = serializers.SerializerMethodField()
     messages_of_chat = serializers.SerializerMethodField()
@@ -75,5 +86,6 @@ class ChatsListSerializer(serializers.ModelSerializer):
         return obj.get_chat_name(user)  # Используем метод модели для получения имени или номера телефона
     
     def get_messages_of_chat(self, obj):
-        return obj.get_messages()
-
+        messages = obj.get_messages()
+        return MessageSerializer(messages, many=True).data
+    
