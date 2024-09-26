@@ -19,8 +19,8 @@
             <!-- Форма отправки сообщения с закругленными углами -->
             <form id="sendMessageForm" class="input-group" method="post">
                 {% csrf_token %}
-                <input type="text" class="form-control" id="messageInput" placeholder="{% trans 'Type your message' %}" aria-label="Message" 
-                       style="border-radius: 10px 0 0 10px;">
+                <input type="hidden" id="requestUser" value="{{ request.user.id }}">
+                <input type="text" class="form-control" id="messageInput" placeholder="{% trans 'Type your message' %}" aria-label="Message" style="border-radius: 10px 0 0 10px;">
                 <button class="btn btn-primary" type="submit" id="sendMessageBtn" 
                         style="border-radius: 0  10px 10px 0;" disabled>
                     <i class="fa-solid fa-paper-plane"></i>
@@ -33,23 +33,4 @@
 
 {% block extra_scripts %}
 <script src="{% static 'js/chats/detail.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Получаем элементы поля ввода и кнопки
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendMessageBtn');   
-        // Функция для проверки состояния поля ввода
-        function toggleSendButton() {
-            if (messageInput.value.trim() === '') {
-                sendButton.disabled = true; // Отключаем кнопку, если поле пустое
-            } else {
-                sendButton.disabled = false; // Активируем кнопку, если введён текст
-            }
-        }   
-        // Добавляем обработчик на событие "input" для поля ввода
-        messageInput.addEventListener('input', toggleSendButton);   
-        // Проверяем состояние кнопки при первой загрузке страницы
-        toggleSendButton();
-    });
-</script>
 {% endblock %}
