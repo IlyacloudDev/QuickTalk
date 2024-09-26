@@ -52,7 +52,7 @@ class Chat(models.Model):
         return self.name  # Для групповых чатов возвращаем имя, если оно установлено
 
     def get_messages(self):
-        return self.messages.all().order_by('-timestamp')
+        return self.messages.all().order_by('timestamp')
 
     def can_edit_or_delete(self, user):
         """Проверяет, может ли пользователь редактировать или удалять чат."""
@@ -91,3 +91,6 @@ class Message(models.Model):
         ordering = ['timestamp']  # Сообщения будут сортироваться по времени отправки
         verbose_name = _('Message')
         verbose_name_plural = _('Messages')
+
+    def get_sender_username(self):
+        return self.sender.username
