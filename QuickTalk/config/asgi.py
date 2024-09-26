@@ -9,24 +9,30 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 
 
 import os
-from django.core.wsgi import get_wsgi_application
+import django
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения из .env
+load_dotenv()
+
+# Устанавливаем DJANGO_SETTINGS_MODULE до любого другого импорта
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
+# Явно инициализируем Django приложения
+django.setup()
+
+
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import chats.routing
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-
-
-# Создайте WSGI приложение для обработки HTTP запросов
-wsgi_application = get_wsgi_application()
-
 application = ProtocolTypeRouter({
-    "http": wsgi_application,  # Используйте WSGI приложение для обработки HTTP запросов
+    "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            chats.routing.websocket_urlpatterns  # Обработка WebSocket запросов
+            chats.routing.websocket_urlpatterns
         )
     ),
 })
