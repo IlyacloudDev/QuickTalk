@@ -37,7 +37,6 @@ class CreatePersonalChatAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class ChatsListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -49,7 +48,7 @@ class ChatsListAPIView(APIView):
     
 
 class ChatDetailAPIView(APIView):
-    parser_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
@@ -61,4 +60,3 @@ class ChatDetailAPIView(APIView):
         except Chat.DoesNotExist:
             return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
         return Response({'detail': instance_serializer})
-    
