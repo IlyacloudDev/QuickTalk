@@ -1,5 +1,7 @@
+import re
 from rest_framework import serializers
 from .models import CustomUser
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
 import os
@@ -13,6 +15,19 @@ class RegisterCustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['phone_number', 'password', 'password2']
+
+    def validate_password(self, password):
+        # Проверяем длину пароля
+        if len(password) < 8:
+            raise ValidationError(_("Password must be at least 8 characters long."))
+
+        # Проверяем, содержит ли пароль хотя бы одну цифру
+        if not re.search(r'\d', password):
+            raise ValidationError(_("Password must contain at least one digit."))
+
+        # Проверяем, содержит ли пароль хотя бы одну букву
+        if not re.search(r'[A-Za-z]', password):
+            raise ValidationError(_("Password must contain at least one letter."))
 
     def validate(self, data):
         # Проверяем, что два пароля совпадают
