@@ -31,6 +31,14 @@
 </div>
 {% endblock %}
 
+{% block extra_styles %}
+<style>
+    .chat-action {
+        margin-right: 15px; /* Отступ справа */
+    }
+</style>
+{% endblock %}
+
 {% block extra_scripts %}
 <script src="{% static 'js/chats/detail.js' %}"></script>
 {% endblock %}
