@@ -19,7 +19,32 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
         // Отображаем имя чата
         const chatName = document.createElement('h2');
-        chatName.textContent = data.detail.chat_name;
+        chatName.textContent = data.detail.chat_name; 
+
+        if (data.detail.permission_delete_update_chat && data.detail.type === 'group') {
+            const aElementUpdateChat = document.createElement('a');
+            aElementUpdateChat.href = '#';
+            const iconElementUpdateChat = document.createElement('i');
+            iconElementUpdateChat.classList.add('fa-solid', 'fa-pen', 'fa-lg', 'chat-action');
+            aElementUpdateChat.appendChild(iconElementUpdateChat);
+
+            const aElementDeleteChat = document.createElement('a');
+            aElementDeleteChat.href = '#';
+            const iconElementDeleteChat = document.createElement('i');
+            iconElementDeleteChat.classList.add('fa-solid', 'fa-trash', 'fa-lg', 'chat-action');
+            aElementDeleteChat.appendChild(iconElementDeleteChat);
+
+            userInfo.prepend(aElementUpdateChat, aElementDeleteChat);
+        } else if (data.detail.permission_delete_update_chat && data.detail.type === 'personal') {
+            const aElementDeleteChat = document.createElement('a');
+            aElementDeleteChat.href = '#';
+            const iconElementDeleteChat = document.createElement('i');
+            iconElementDeleteChat.classList.add('fa-solid', 'fa-trash', 'fa-lg', 'chat-action');
+            aElementDeleteChat.appendChild(iconElementDeleteChat);
+
+            userInfo.prepend(aElementDeleteChat);
+        }
+
         userInfo.prepend(chatName);
 
         const messages = data.detail.messages_of_chat;
