@@ -76,10 +76,11 @@ class MessageSerializer(serializers.ModelSerializer):
 class ChatsListSerializer(serializers.ModelSerializer):
     chat_name = serializers.SerializerMethodField()
     messages_of_chat = serializers.SerializerMethodField()
+    permission_delete_update_chat = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ['chat_name', 'messages_of_chat', 'type', 'id']  # 'chat_name' вместо 'name'
+        fields = ['chat_name', 'messages_of_chat', 'permission_delete_update_chat', 'type', 'id']
 
     def get_chat_name(self, obj):
         user = self.context['request'].user  # Получаем текущего пользователя из контекста
@@ -88,4 +89,8 @@ class ChatsListSerializer(serializers.ModelSerializer):
     def get_messages_of_chat(self, obj):
         messages = obj.get_messages()
         return MessageSerializer(messages, many=True).data
+    
+    def get_permission_delete_update_chat(self, obj):
+        user = self.context['request'].user
+        return obj.can_edit_or_delete(user)
     
