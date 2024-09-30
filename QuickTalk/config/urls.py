@@ -33,8 +33,10 @@ urlpatterns = [
     path('detail-user/', TemplateView.as_view(template_name='users/detail.html'), name='detail-user'),
 
     path('create-group-chat/', TemplateView.as_view(template_name='chats/create_group_chat.html'), name='create-group-chat'),
+    path('update-group-chat/', TemplateView.as_view(template_name='chats/update_group_chat.html'), name='update-group-chat'),
     path('chats-list/', TemplateView.as_view(template_name='chats/chats_list.html'), name='chats-list'),
     path('detail-chat/', TemplateView.as_view(template_name='chats/detail.html'), name='detail-chat'),
+    path('delete-chat/', TemplateView.as_view(template_name='chats/delete.html'), name='delete-chat'),
 
     path('api/users/', include('users.urls')),
     path('api/chats/', include('chats.urls')),
