@@ -36,7 +36,7 @@ document.getElementById('createGroupChatForm').addEventListener('submit', functi
             nameError.style.display = 'block';
             nameError.classList.add('is-invalid');
         } else if (result.detail) {
-            window.location.href = window.START_URL;
+            window.location.href = window.CHATS_LIST_URL;
         }
     })
     .catch(error => {

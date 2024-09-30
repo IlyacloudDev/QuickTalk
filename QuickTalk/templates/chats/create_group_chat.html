@@ -33,7 +33,7 @@
 {% block extra_scripts %}
 <script>
     window.CREATE_API_GROUP_CHAT = "{% url 'api-create-group-chat' %}"
-    window.START_URL = "{% url 'start' %}"
+    window.CHATS_LIST_URL = "{% url 'chats-list' %}";
 </script>
 <script src="{% static 'js/chats/create-group-chat.js' %}"></script>
 {% endblock %}
