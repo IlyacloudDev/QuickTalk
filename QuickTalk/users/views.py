@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer, CustomUserSearchSerializer, CustomUserSerializer
 from django.contrib.auth import login
@@ -12,6 +13,7 @@ from .models import CustomUser
 
 class CustomUserCreateAPIView(APIView):
     def post(self, request):
+
         serializer = RegisterCustomUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -31,7 +33,7 @@ class CustomUserLoginAPIView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             login(request, user)  # Авторизация пользователя
-            return Response({"detail": "Successfully logged in."}, status=status.HTTP_200_OK)
+            return Response({"detail": _("Successfully logged in.")}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -40,7 +42,7 @@ class CustomUserLogoutAPIView(APIView):
         # Завершение сессии
         logout(request)
         # Возвращаем успешный ответ
-        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+        return Response({"detail": _("Successfully logged out.")}, status=status.HTTP_200_OK)
 
 
 class CustomUserSearchAPIView(APIView):
@@ -54,7 +56,7 @@ class CustomUserSearchAPIView(APIView):
                 instance = CustomUser.objects.get(phone_number=phone_number)
                 instance_serializer = CustomUserSerializer(instance).data
             except CustomUser.DoesNotExist:
-                return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
             if not instance_serializer['avatar']:
                 instance_serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
         
@@ -69,11 +71,11 @@ class CustomUserUpdateAPIView(APIView):
     def put(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
         if not pk:
-            return Response({"error": "Method PUT not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"error": _("Method PUT not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             instance = CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
-            return Response({"error": "Object does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": _("Object does not exist")}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CustomUserProfileSerializer(instance=instance, data=request.data, partial=True)
         if serializer.is_valid():
@@ -88,12 +90,12 @@ class CustomUserDetailAPIView(APIView):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
         if not pk:
-            return Response({"error": "Method GET not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"error": _("Method GET not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             instance = CustomUser.objects.get(pk=pk)
             instance_serializer = CustomUserSerializer(instance).data
         except CustomUser.DoesNotExist:
-            return Response({"error": "Object does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
         if not instance_serializer['avatar']:
             instance_serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
         return Response({'detail': instance_serializer})
