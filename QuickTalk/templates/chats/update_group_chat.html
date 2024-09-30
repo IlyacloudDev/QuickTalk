@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Edit Group Chat" %}{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Централизованная форма для редактирования группового чата -->
+        <div class="col-lg-10 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px;">
+            <form id="editGroupChatForm" class="form-group" method="post" novalidate style="width: 100%;">
+                {% csrf_token %}
+                <h2 class="text-center mb-4">{% trans "Edit Group Chat" %}</h2>
+
+                <!-- Поле для имени группы -->
+                <div class="form-group mb-3">
+                    <label for="group_name" class="form-label">{% trans "Group Name" %}</label>
+                    <input type="text" id="group_name" name="name" class="form-control" placeholder="{% trans 'Enter group name' %}">
+                    <div class="invalid-feedback" id="name_error" style="display: none;"></div>
+                </div>
+
+                <!-- Кнопка отправки -->
+                <div class="d-flex justify-content-center">
+                    <button id="editGroupChatButton" class="btn btn-primary btn-lg">{% trans "Edit Group Chat" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.CHATS_LIST_URL = "{% url 'chats-list' %}";
+</script>
+<script src="{% static 'js/chats/update-group-chat.js' %}"></script>
+{% endblock %}
