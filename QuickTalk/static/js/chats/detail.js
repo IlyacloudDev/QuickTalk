@@ -23,13 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (data.detail.permission_delete_update_chat && data.detail.type === 'group') {
             const aElementUpdateChat = document.createElement('a');
-            aElementUpdateChat.href = '#';
+            aElementUpdateChat.href = window.UPDATE_CHAT_URL;
             const iconElementUpdateChat = document.createElement('i');
             iconElementUpdateChat.classList.add('fa-solid', 'fa-pen', 'fa-lg', 'chat-action');
             aElementUpdateChat.appendChild(iconElementUpdateChat);
 
             const aElementDeleteChat = document.createElement('a');
-            aElementDeleteChat.href = '#';
+            aElementDeleteChat.href = window.DELETE_CHAT_URL;
             const iconElementDeleteChat = document.createElement('i');
             iconElementDeleteChat.classList.add('fa-solid', 'fa-trash', 'fa-lg', 'chat-action');
             aElementDeleteChat.appendChild(iconElementDeleteChat);
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             userInfo.prepend(aElementUpdateChat, aElementDeleteChat);
         } else if (data.detail.permission_delete_update_chat && data.detail.type === 'personal') {
             const aElementDeleteChat = document.createElement('a');
-            aElementDeleteChat.href = '#';
+            aElementDeleteChat.href = window.DELETE_CHAT_URL;
             const iconElementDeleteChat = document.createElement('i');
             iconElementDeleteChat.classList.add('fa-solid', 'fa-trash', 'fa-lg', 'chat-action');
             aElementDeleteChat.appendChild(iconElementDeleteChat);
