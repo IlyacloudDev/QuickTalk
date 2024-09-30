@@ -24,6 +24,11 @@ class CreateGroupChatSerializer(serializers.ModelSerializer):
         chat.users.add(request_user)
         return chat
     
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+        return instance
+    
 
 class CreatePersonalChatSerializer(serializers.ModelSerializer):
     type = serializers.CharField(read_only=True)
@@ -46,7 +51,7 @@ class CreatePersonalChatSerializer(serializers.ModelSerializer):
         ).filter(users=other_user).exists()
 
         if existing_chat:
-            raise serializers.ValidationError("A personal chat between these users already exists.")
+            raise serializers.ValidationError(_("A personal chat between these users already exists."))
         return data
 
     def create(self, validated_data):
@@ -93,4 +98,13 @@ class ChatsListSerializer(serializers.ModelSerializer):
     def get_permission_delete_update_chat(self, obj):
         user = self.context['request'].user
         return obj.can_edit_or_delete(user)
-    
+
+
+class ChatDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = []
+
+    def destroy(self, instance):
+        instance.delete()
+        return  # Ничего не возвращаем
