@@ -28,6 +28,8 @@ class RegisterCustomUserSerializer(serializers.ModelSerializer):
         # Проверяем, содержит ли пароль хотя бы одну букву
         if not re.search(r'[A-Za-z]', password):
             raise ValidationError(_("Password must contain at least one letter."))
+        
+        return password
 
     def validate(self, data):
         # Проверяем, что два пароля совпадают
