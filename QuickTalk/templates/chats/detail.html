@@ -40,5 +40,9 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script>
+    window.UPDATE_CHAT_URL = "{% url 'update-group-chat' %}";
+    window.DELETE_CHAT_URL = "{% url 'delete-chat' %}";
+</script>
 <script src="{% static 'js/chats/detail.js' %}"></script>
 {% endblock %}
