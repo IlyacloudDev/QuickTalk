@@ -12,12 +12,18 @@ from .models import CustomUser
 
 
 class CustomUserCreateAPIView(APIView):
-    def post(self, request):
+    """
+    Handles user registration. Accepts POST requests with required user data (phone number, password, etc.).
+    
+    Returns:
+    - 201 CREATED if user is successfully created with serialized data of the new user.
+    - 400 BAD REQUEST if validation errors are found.
+    """
 
+    def post(self, request):
         serializer = RegisterCustomUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            # Возвращаем сериализованные данные о созданном пользователе
             return Response(
                 {
                 'new_user': RegisterCustomUserSerializer(user).data
@@ -28,24 +34,45 @@ class CustomUserCreateAPIView(APIView):
     
 
 class CustomUserLoginAPIView(APIView):
+    """
+    Handles user login. Accepts POST requests with phone number and password.
+    
+    Returns:
+    - 200 OK if login is successful.
+    - 400 BAD REQUEST if login credentials are incorrect or missing.
+    """
+
     def post(self, request):
         serializer = LoginCustomUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            login(request, user)  # Авторизация пользователя
+            login(request, user)
             return Response({"detail": _("Successfully logged in.")}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomUserLogoutAPIView(APIView):
+    """
+    Handles user logout. Accepts POST requests to end the user session.
+    
+    Returns:
+    - 200 OK if logout is successful.
+    """
+
     def post(self, request):
-        # Завершение сессии
-        logout(request)
-        # Возвращаем успешный ответ
+        logout(request) 
         return Response({"detail": _("Successfully logged out.")}, status=status.HTTP_200_OK)
 
 
 class CustomUserSearchAPIView(APIView):
+    """
+    Allows authenticated users to search for other users by phone number. Accepts POST requests.
+    
+    Returns:
+    - 200 OK with user details if the search is successful.
+    - 404 NOT FOUND if the user does not exist.
+    - 400 BAD REQUEST if validation errors are found.
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -65,6 +92,16 @@ class CustomUserSearchAPIView(APIView):
 
 
 class CustomUserUpdateAPIView(APIView):
+    """
+    Allows authenticated users to update their profile details (e.g., username, avatar).
+    Accepts PUT requests with multipart/form-data.
+    
+    Returns:
+    - 200 OK if the update is successful with the updated user data.
+    - 404 NOT FOUND if the user does not exist.
+    - 400 BAD REQUEST if validation errors are found.
+    - 405 METHOD NOT ALLOWED if the PUT request does not include the user ID.
+    """
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated, IsOwner]
 
@@ -75,7 +112,7 @@ class CustomUserUpdateAPIView(APIView):
         try:
             instance = CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
-            return Response({"error": _("Object does not exist")}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CustomUserProfileSerializer(instance=instance, data=request.data, partial=True)
         if serializer.is_valid():
@@ -85,6 +122,15 @@ class CustomUserUpdateAPIView(APIView):
     
 
 class CustomUserDetailAPIView(APIView):
+    """
+    Retrieves detailed information about a user based on the user ID (pk).
+    Accepts GET requests.
+    
+    Returns:
+    - 200 OK with user details if the user is found.
+    - 404 NOT FOUND if the user does not exist.
+    - 405 METHOD NOT ALLOWED if the request does not include the user ID.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
