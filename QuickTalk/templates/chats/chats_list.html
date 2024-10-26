@@ -14,12 +14,14 @@
 
                 <!-- Иконки под заголовком -->
                 <div class="text-center mb-4">
-                    <a href="{% url 'create-group-chat' %}" title="{% trans 'Create new group chat' %}" class="btn btn-light">
-                        <i class="fa-solid fa-plus"></i> {% trans 'Create Group Chat' %}
-                    </a>
-                    <a href="{% url 'search-user' %}" title="{% trans 'Search users by phone number' %}" class="btn btn-light ml-3">
-                        <i class="fa-solid fa-magnifying-glass"></i> {% trans 'Search Users' %}
-                    </a>
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <a href="{% url 'create-group-chat' %}" title="{% trans 'Create new group chat' %}" class="btn btn-light">
+                            <i class="fa-solid fa-plus"></i> {% trans 'Create Group Chat' %}
+                        </a>
+                        <a href="{% url 'search-user' %}" title="{% trans 'Search users by phone number' %}" class="btn btn-light">
+                            <i class="fa-solid fa-magnifying-glass"></i> {% trans 'Search Users' %}
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Список чатов будет динамически загружаться сюда -->
