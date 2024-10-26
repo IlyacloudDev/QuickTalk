@@ -49,11 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const messages = data.detail.messages_of_chat;
 
-        const noMessagesElement = messageList.querySelector('p.text-center');
-        if (noMessagesElement) {
-            messageList.removeChild(noMessagesElement);
-        }
-
         if (messages.length === 0) {
             const noMessages = document.createElement('p');
             noMessages.textContent = 'No messages';
@@ -93,6 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Обрабатываем входящие сообщения через WebSocket
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
+
+        const noMessagesElement = messageList.querySelector('p.text-center');
+        if (noMessagesElement) {
+            messageList.removeChild(noMessagesElement);
+        }
+        
         const messageElement = document.createElement('div');
         messageElement.classList.add('message-container');
         messageElement.classList.add(data.user_id === parseInt(requestUser) ? 'message-sender' : 'message-receiver'); // Выравнивание
@@ -117,19 +118,21 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Chat socket closed unexpectedly');
     };
 
-    // Обработка отправки сообщений
-    const form = document.getElementById('sendMessageForm');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const message = messageInput.value;
+    chatSocket.onopen = e => {
+        // Обработка отправки сообщений
+        const form = document.getElementById('sendMessageForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = messageInput.value;
 
-        if (message.trim() !== '') {
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInput.value = ''; // Очищаем поле ввода после отправки
-        }
-    });
+            if (message.trim() !== '') {
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                messageInput.value = ''; // Очищаем поле ввода после отправки
+            }
+        });
+    };
 
     // Функция для активации/деактивации кнопки отправки сообщения
     function toggleSendButton() {
