@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const userId = sessionStorage.getItem('userId');
+    const userId = sessionStorage.getItem('selectedUser');
 
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 

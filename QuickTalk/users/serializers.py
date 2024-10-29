@@ -158,16 +158,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ['username', 'avatar', 'phone_number', 'id']
 
 
-class CustomUserSearchSerializer(serializers.Serializer):
-    """
-    Serializer for searching a CustomUser by phone number.
-    
-    Fields:
-        - phone_number: User's phone number (required).
-    """
-    phone_number = PhoneNumberField(required=True)
-
-
 class CustomUserProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for updating the profile of a CustomUser, allowing modifications to the username and avatar.

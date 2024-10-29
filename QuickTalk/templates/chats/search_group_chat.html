@@ -10,15 +10,16 @@
         <div class="col-lg-12 d-flex flex-column align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px;">
             <form id="searchUserByPhoneForm" class="form-group" method="post" novalidate style="width: 100%;">
                 {% csrf_token %}
-                <h2 class="text-center mb-4">{% trans "Search User" %}</h2>
+                <h2 class="text-center mb-4">{% trans "Search Group Chat" %}</h2>
 
                 <!-- Поле для ввода номера телефона -->
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="userPhone" placeholder="Enter phone...">
+                    <input type="text" class="form-control" id="groupName" placeholder="Enter name of chat...">
+                    <!-- <button id="createGroupChatButton" class="btn btn-primary btn-lg"><i class="fa-solid fa-magnifying-glass"></i></button> -->
                 </div>
                 <div class="invalid-feedback" id="phone_error" style="display: none;"></div>
             </form>
-            <div id="userItems" class="list-group w-100">
+            <div id="groupChatItems" class="list-group w-100">
                 <!-- User items will be added by JS -->
             </div>
         </div>
@@ -28,8 +29,8 @@
 
 {% block extra_scripts %}
 <script>
-    window.SEARCH_API_USER = "{% url 'api-search-user' %}"
-    window.DETAIL_USER = "{% url 'detail-user' %}"
+    window.SEARCH_API_GROUP_CHAT = "{% url 'api-search-group-chat' %}"
+    // window.DETAIL_USER = "{% url 'detail-user' %}"
 </script>
-<script src="{% static 'js/users/search.js' %}"></script>
+<script src="{% static 'js/chats/search-group-chat.js' %}"></script>
 {% endblock %}

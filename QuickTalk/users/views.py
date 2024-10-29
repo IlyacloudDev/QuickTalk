@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer, CustomUserSearchSerializer, CustomUserSerializer
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from .permissions import IsOwner
 from .models import CustomUser
+from phonenumber_field.serializerfields import PhoneNumberField
 
 
 class CustomUserCreateAPIView(APIView):
@@ -66,29 +68,50 @@ class CustomUserLogoutAPIView(APIView):
 
 class CustomUserSearchAPIView(APIView):
     """
-    Allows authenticated users to search for other users by phone number. Accepts POST requests.
+    API view for searching a custom user by phone number.
+
+    This endpoint allows authenticated users to search for a specific user based on their phone number.
+    If a valid phone number is provided in the query parameters, the endpoint verifies its validity.
+    Upon successful validation, it attempts to retrieve the user from the database. 
+    If the user exists, their details are returned as JSON; otherwise, a 404 error response is returned.
     
     Returns:
-    - 200 OK with user details if the search is successful.
-    - 404 NOT FOUND if the user does not exist.
-    - 400 BAD REQUEST if validation errors are found.
+        - 200 OK: If the user is found, with the user's serialized data.
+        - 400 Bad Request: If the phone number format is invalid.
+        - 404 Not Found: If no user is found with the provided phone number.
+        
+    Query Parameters:
+        - query (str): The phone number to search for.
+    
+    Permission:
+        - Only authenticated users can access this endpoint.
+    
+    Response Format:
+        - JSON object containing user details. If the user has no avatar, a default avatar URL is provided.
     """
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        serializer = CustomUserSearchSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data['phone_number']
-            try:
-                instance = CustomUser.objects.get(phone_number=phone_number)
-                instance_serializer = CustomUserSerializer(instance).data
-            except CustomUser.DoesNotExist:
-                return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
-            if not instance_serializer['avatar']:
-                instance_serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
+    def get(self, request):
+        search_query = request.query_params.get('query', '')
         
-            return Response({'detail': instance_serializer})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if search_query:
+            phone_field = PhoneNumberField()
+            try:
+                phone_field.run_validation(search_query)
+            except ValidationError as e:
+                return Response(
+                    {"error": e.detail[0]}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            try:
+                user_item = CustomUser.objects.get(phone_number=search_query)
+            except CustomUser.DoesNotExist:
+                 return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
+            
+        serializer = CustomUserSerializer(user_item).data
+        if not serializer['avatar']:
+            serializer['avatar'] = '/static/default_avatar/quicktalk_base-avatar.jpg'
+        return Response(serializer)
 
 
 class CustomUserUpdateAPIView(APIView):
