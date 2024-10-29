@@ -67,6 +67,28 @@ class CustomUserLogoutAPIView(APIView):
 
 
 class CustomUserSearchAPIView(APIView):
+    """
+    API view for searching a custom user by phone number.
+
+    This endpoint allows authenticated users to search for a specific user based on their phone number.
+    If a valid phone number is provided in the query parameters, the endpoint verifies its validity.
+    Upon successful validation, it attempts to retrieve the user from the database. 
+    If the user exists, their details are returned as JSON; otherwise, a 404 error response is returned.
+    
+    Returns:
+        - 200 OK: If the user is found, with the user's serialized data.
+        - 400 Bad Request: If the phone number format is invalid.
+        - 404 Not Found: If no user is found with the provided phone number.
+        
+    Query Parameters:
+        - query (str): The phone number to search for.
+    
+    Permission:
+        - Only authenticated users can access this endpoint.
+    
+    Response Format:
+        - JSON object containing user details. If the user has no avatar, a default avatar URL is provided.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

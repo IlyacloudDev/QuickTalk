@@ -145,6 +145,25 @@ class ChatDetailAPIView(APIView):
 
 
 class GroupChatSearchAPIView(APIView):
+    """
+    API view for searching group chats by name.
+
+    This endpoint allows authenticated users to search for group chats based on a substring match within the chat name.
+    If a search query is provided, it returns a list of group chats whose names contain the query string.
+    If no search query is given, an empty list is returned.
+
+    Returns:
+        - 200 OK: A JSON array of serialized group chat objects that match the search criteria.
+    
+    Query Parameters:
+        - query (str): The substring to search for within group chat names.
+
+    Permission:
+        - Only authenticated users are permitted to access this endpoint.
+    
+    Response Format:
+        - JSON array of group chat objects. Each object represents a group chat with details as per the `ChatsListSerializer`.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
