@@ -5,7 +5,7 @@ from rest_framework import status
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
-from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer, CustomUserSearchSerializer, CustomUserSerializer
+from .serializers import RegisterCustomUserSerializer, LoginCustomUserSerializer, CustomUserProfileSerializer, CustomUserSerializer
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from .permissions import IsOwner
