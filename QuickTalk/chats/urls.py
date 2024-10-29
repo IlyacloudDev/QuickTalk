@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CreateGroupChatAPIView, ChatsListAPIView, CreatePersonalChatAPIView, ChatDetailAPIView, UpdateGroupChatAPIView, ChatDeleteAPIView
+from .views import CreateGroupChatAPIView, ChatsListAPIView, CreatePersonalChatAPIView, ChatDetailAPIView, UpdateGroupChatAPIView, GroupChatSearchAPIView, ChatDeleteAPIView
 
 
 urlpatterns = [
@@ -8,5 +8,6 @@ urlpatterns = [
     path('chats-list/', ChatsListAPIView.as_view(), name='api-chats-list'),
     path('create-personal-chat/', CreatePersonalChatAPIView.as_view(), name='api-create-personal-chat'),
     path('detail-chat/<int:pk>/', ChatDetailAPIView.as_view(), name='api-detail-chat'),
+    path('search-group-chat/', GroupChatSearchAPIView.as_view(), name='api-search-group-chat'),
     path('delete-chat/<int:pk>/', ChatDeleteAPIView.as_view(), name='api-delete-chat'),
 ]
