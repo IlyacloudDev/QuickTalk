@@ -144,6 +144,20 @@ class ChatDetailAPIView(APIView):
         return Response({'detail': instance_serializer})
 
 
+class GroupChatSearchAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        search_query = request.query_params.get('query', '')
+        if search_query:
+            group_chats = Chat.objects.filter(name__icontains=search_query, type="group")
+        else:
+            group_chats = Chat.objects.none()
+        
+        serializer = ChatsListSerializer(group_chats, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
 class ChatDeleteAPIView(APIView):
     """
     API View for deleting a specific chat.
