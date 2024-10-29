@@ -18,11 +18,18 @@
                         <a href="{% url 'create-group-chat' %}" title="{% trans 'Create new group chat' %}" class="btn btn-light">
                             <i class="fa-solid fa-plus"></i> {% trans 'Create Group Chat' %}
                         </a>
-                        <a href="{% url 'search-user' %}" title="{% trans 'Search users by phone number' %}" class="btn btn-light">
-                            <i class="fa-solid fa-magnifying-glass"></i> {% trans 'Search Users' %}
-                        </a>
+                        <div class="dropdown">
+                            <a href="#" title="{% trans 'Search users by phone number or group chats by name' %}" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-magnifying-glass"></i> {% trans 'Search' %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'search-user' %}">{% trans "Search user" %}</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'search-group-chat' %}">{% trans "Search group chat" %}</a></li>
+                            </ul>  
+                        </div>
                     </div>
-                </div>
+                </div>                
 
                 <!-- Список чатов будет динамически загружаться сюда -->
                 <div id="chatList" class="list-group">
