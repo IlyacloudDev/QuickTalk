@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.length > 0) {
                     data.forEach(chat => {
                         const chatItem = document.createElement('a');
-                        chatItem.href = '#';  // путь к чату
+                        chatItem.href = window.DETAIL_CHAT;  // путь к чату
                         chatItem.className = 'btn btn-primary btn-lg mb-3 d-flex flex-column justify-content-center';
                         chatItem.style.width = '100%';
                         chatItem.style.height = '70px';
@@ -34,6 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         `;
                         searchResults.appendChild(chatItem);
+                        chatItem.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            sessionStorage.setItem('selectedChatId', chat.id);
+                            window.location.href = window.DETAIL_CHAT;
+                        });
                     });
                 } else {
                     searchResults.innerHTML = '<p class="text-center text-white">No chats available.</p>';
