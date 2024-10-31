@@ -64,25 +64,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     body: JSON.stringify(data)
                 })
-                    .then(response => {
-                        if (response.status === 400) {
-                            alert("Chat already exists. Redirecting...");
-                            // Логика для перенаправления на уже существующий чат
-                            window.location.href = window.LIST_API_CHATS;
-                        } else if (!response.ok) {
-                            throw new Error('Failed to create chat');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.detail) {
-                            // Перенаправление на новый чат
-                            window.location.href = window.LIST_API_CHATS;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error creating chat:', error);
-                    });
+                .then(response => {
+                    if (response.status === 400) {
+                        alert("Chat already exists. Redirecting...");
+                        // Логика для перенаправления на уже существующий чат
+                        window.location.href = window.LIST_API_CHATS;
+                    } else if (!response.ok) {
+                        throw new Error('Failed to create chat');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.detail) {
+                        // Перенаправление на новый чат
+                        window.location.href = window.LIST_API_CHATS;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating chat:', error);
+                });
             });
         }
     })

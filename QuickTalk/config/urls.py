@@ -38,6 +38,7 @@ urlpatterns = [
     path('search-group-chat/', TemplateView.as_view(template_name='chats/search_group_chat.html'), name='search-group-chat'),
     path('detail-chat/', TemplateView.as_view(template_name='chats/detail.html'), name='detail-chat'),
     path('delete-chat/', TemplateView.as_view(template_name='chats/delete.html'), name='delete-chat'),
+    path('detail-group-chat/', TemplateView.as_view(template_name='chats/grp-cht-dtl-from-search.html'), name='detail-group-chat'),
 
     path('api/users/', include('users.urls')),
     path('api/chats/', include('chats.urls')),

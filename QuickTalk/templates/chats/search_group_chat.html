@@ -29,8 +29,7 @@
 
 {% block extra_scripts %}
 <script>
-    window.SEARCH_API_GROUP_CHAT = "{% url 'api-search-group-chat' %}"
-    // window.DETAIL_USER = "{% url 'detail-user' %}"
+    window.DETAIL_CHAT = "{% url 'detail-group-chat' %}"
 </script>
 <script src="{% static 'js/chats/search-group-chat.js' %}"></script>
 {% endblock %}
