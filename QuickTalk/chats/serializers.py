@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Chat, Message
 from users.models import CustomUser
+from .exceptions import AlreadyJoinedChatException
 from django.utils.translation import gettext_lazy as _
 
 
@@ -231,3 +232,26 @@ class ChatDeleteSerializer(serializers.ModelSerializer):
         """
         instance.delete()
         return
+
+
+class JoinToGroupChatSerializer(serializers.Serializer):
+    user_id_to_join = serializers.IntegerField(required=True)
+    chat_id_to_join = serializers.IntegerField(required=True)
+
+    def validate(self, data):
+        try:
+            user = CustomUser.objects.get(id=data['user_id_to_join'])
+            chat = Chat.objects.get(id=data['chat_id_to_join'])
+
+        except (Chat.DoesNotExist, CustomUser.DoesNotExist):
+            raise serializers.ValidationError(_("Object does not exist."))
+
+        already_joined = chat.users.filter(id=user.id).exists()
+        print(already_joined)
+
+        if already_joined:
+            print('вызов')
+            raise AlreadyJoinedChatException()
+        chat.users.add(user)
+        print('Не будет выполняться, если пользователь уже есть')
+        return data
