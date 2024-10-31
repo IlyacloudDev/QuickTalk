@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
-from .serializers import CreateGroupChatSerializer, ChatsListSerializer, CreatePersonalChatSerializer, ChatDeleteSerializer
+from .serializers import CreateGroupChatSerializer, ChatsListSerializer, CreatePersonalChatSerializer, ChatDeleteSerializer, JoinToGroupChatSerializer
 from .models import Chat
 
 
@@ -205,3 +205,19 @@ class ChatDeleteAPIView(APIView):
         serializer.destroy(chat)
 
         return Response({"detail": _("Chat deleted successfully.")}, status=status.HTTP_204_NO_CONTENT)
+
+
+class JoinToGroupChatAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        srlz = JoinToGroupChatSerializer(data=request.data)
+        srlz.is_valid(raise_exception=True)
+
+        print('будет выполнено, если пользователь не добавлен')
+        return Response({
+            'detail': _('The user was successfully added to the chat.'),
+        }, status=status.HTTP_201_CREATED)
+        
+
+    
