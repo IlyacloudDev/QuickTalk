@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Detail{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="row">
+        <!-- Левая сторона: Форма редактирования профиля -->
+        <div id="chatInfo" class="col-lg-6 d-flex align-items-center justify-content-center bg-dark text-white p-5" style="border-radius: 10px 0 0 10px;">
+        
+        </div>
+        <!-- Правая сторона: Приветственное сообщение -->
+        <div class="col-lg-6 d-flex flex-column align-items-center justify-content-center bg-primary p-5" style="border-radius: 0 10px 10px 0;">
+            <div class="text-white text-center">
+                <h2>{% trans "Do you want to find a friend?" %}</h2>
+                <p>{% trans "Click below and start chatting." %}</p>
+                <input type="hidden" id="userId" value="{{ request.user.id }}">
+            </div>
+            <form id="startChatForm">
+                {% csrf_token %}
+                <div id="userChatting" class="mt-4">
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/chats/grp-cht-dtl-from-search.js' %}"></script>
+<script>
+    window.JOIN_TO_GROUP_CHAT = "{% url 'api-join-to-group-chat' %}"
+    window.LIST_API_CHATS = "{% url 'chats-list' %}"
+</script>
+{% endblock %}
