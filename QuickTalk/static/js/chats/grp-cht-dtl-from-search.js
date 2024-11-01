@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 if (data.detail === "The user has already joined this group chat.") {
                     alert("You are already joined to this chat. Redirecting...");
                     window.location.href = window.LIST_API_CHATS;
