@@ -235,6 +235,27 @@ class ChatDeleteSerializer(serializers.ModelSerializer):
 
 
 class JoinToGroupChatSerializer(serializers.Serializer):
+    """
+    Serializer to validate and process user join requests for a group chat.
+
+    Fields:
+        - user_id_to_join (IntegerField): ID of the user who is requesting to join the chat. Required.
+        - chat_id_to_join (IntegerField): ID of the chat to be joined. Required.
+
+    Validation:
+        - Checks if both the user and chat with the provided IDs exist.
+        - If either the user or chat does not exist, raises a ValidationError with the message "Object does not exist."
+        - Verifies if the user is already a member of the chat.
+            - If the user is already in the chat, raises an `AlreadyJoinedChatException`.
+            - Otherwise, adds the user to the chat.
+
+    Returns:
+        - The validated data if the user is successfully added to the chat.
+
+    Raises:
+        - ValidationError: If the specified user or chat does not exist.
+        - AlreadyJoinedChatException: If the user is already a member of the specified chat.
+    """
     user_id_to_join = serializers.IntegerField(required=True)
     chat_id_to_join = serializers.IntegerField(required=True)
 
@@ -247,11 +268,8 @@ class JoinToGroupChatSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("Object does not exist."))
 
         already_joined = chat.users.filter(id=user.id).exists()
-        print(already_joined)
 
         if already_joined:
-            print('вызов')
             raise AlreadyJoinedChatException()
         chat.users.add(user)
-        print('Не будет выполняться, если пользователь уже есть')
         return data
