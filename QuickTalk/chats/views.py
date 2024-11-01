@@ -208,16 +208,29 @@ class ChatDeleteAPIView(APIView):
 
 
 class JoinToGroupChatAPIView(APIView):
+    """
+    API view to handle requests for adding a user to a group chat.
+
+    This endpoint accepts a POST request with necessary data to add a user to a specified group chat.
+    The request data is validated by the `JoinToGroupChatSerializer`, ensuring that the provided information
+    meets the required criteria. If validation passes, the user is added to the group chat.
+
+    Permission:
+        - Only authenticated users are allowed to access this endpoint.
+
+    Raises:
+        - ValidationError: If the data fails to validate, an exception is raised, and a 400 response is returned.
+
+    Returns:
+        - 201 Created: When the user is successfully added to the chat, a success message is returned.
+    """
+    
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         srlz = JoinToGroupChatSerializer(data=request.data)
         srlz.is_valid(raise_exception=True)
 
-        print('будет выполнено, если пользователь не добавлен')
         return Response({
             'detail': _('The user was successfully added to the chat.'),
         }, status=status.HTTP_201_CREATED)
-        
-
-    
