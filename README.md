@@ -90,5 +90,3 @@ Make sure you have Python and pip installed.
 ## Usage
 
 Now you can use QuickTalk to communicate in real time. Create chats and chat with other users!
-
-So far, the ability to add users to group chats is only available through the *admin panel* Django!
