@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     'users',
     'chats',
+    'pages',
 
     'rest_framework',
     'channels',
