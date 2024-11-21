@@ -13,22 +13,7 @@ from phonenumber_field.serializerfields import PhoneNumberField
 
 class RegisterCustomUserSerializer(serializers.ModelSerializer):
     """
-    Serializer for registering a new CustomUser. Includes password validation and a repeated password check.
-    
-    Fields:
-        - phone_number: User's phone number (required).
-        - password: User's password (write-only, required).
-        - password2: Confirmation of the user's password (write-only, required).
-    
-    Methods:
-        validate_password(password):
-            Validates that the password meets minimum length and complexity requirements.
-        
-        validate(data):
-            Ensures that both password fields match.
-        
-        create(validated_data):
-            Creates a new CustomUser instance and saves it with the hashed password.
+    Serializer for registering a new user.
     """
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     password2 = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -39,45 +24,19 @@ class RegisterCustomUserSerializer(serializers.ModelSerializer):
 
     def validate_password(self, password):
         """
-        Validates the password to ensure it meets minimum length and complexity requirements.
-
-        Args:
-            password (str): The password to validate.
-
-        Returns:
-            str: The validated password.
-
-        Raises:
-            serializers.ValidationError: If the password does not meet the required criteria.
+        Validates password length and complexity.
         """
         return _validate_password_for_minimum_length_and_character_complexity(password)
-        
 
     def validate(self, data):
         """
-        Validates the data to ensure the passwords match.
-
-        Args:
-            data (dict): The data containing the passwords.
-
-        Returns:
-            dict: The validated data.
-
-        Raises:
-            serializers.ValidationError: If the passwords do not match.
+        Ensures passwords match.
         """
         return _validate_two_password_fields_match(data)
-        
 
     def create(self, validated_data):
         """
-        Creates a new CustomUser instance with the provided data.
-
-        Args:
-            validated_data (dict): The validated data, excluding the repeated password field.
-
-        Returns:
-            CustomUser: The newly created user instance.
+        Creates a new user instance.
         """
         validated_data.pop('password2')
         return _create_new_customuser_instance_with_provided_data(
@@ -88,35 +47,17 @@ class RegisterCustomUserSerializer(serializers.ModelSerializer):
 
 class LoginCustomUserSerializer(serializers.Serializer):
     """
-    Serializer for authenticating a CustomUser via phone number and password.
-    
-    Fields:
-        - phone_number: User's phone number (required).
-        - password: User's password (write-only, required).
-    
-    Methods:
-        validate(data):
-            Authenticates the user using the provided credentials.
+    Serializer for user authentication.
     """
     phone_number = PhoneNumberField()
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     def validate(self, data):
         """
-        Authenticates the user with the provided phone number and password.
-
-        Args:
-            data (dict): The data containing phone number and password.
-
-        Returns:
-            dict: The validated data with the authenticated user.
-
-        Raises:
-            serializers.ValidationError: If authentication fails.
+        Authenticates user by phone number and password.
         """
         phone_number = data.get('phone_number')
         password = data.get('password')
-
         data['user'] = _validate_phone_number_and_password_by_authenticating_user(
             phone_number=phone_number, 
             password=password
@@ -126,13 +67,7 @@ class LoginCustomUserSerializer(serializers.Serializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
-    Serializer for the CustomUser model, returning basic user information.
-    
-    Fields:
-        - username: User's username.
-        - avatar: User's avatar image.
-        - phone_number: User's phone number.
-        - id: User's unique ID.
+    Serializer for user details.
     """
     class Meta:
         model = CustomUser
@@ -141,15 +76,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class CustomUserProfileSerializer(serializers.ModelSerializer):
     """
-    Serializer for updating the profile of a CustomUser, allowing modifications to the username and avatar.
-    
-    Fields:
-        - username: User's username.
-        - avatar: User's avatar image.
-    
-    Methods:
-        update(instance, validated_data):
-            Updates the user's profile with the provided data, and handles avatar updates.
+    Serializer for updating user profile.
     """
     class Meta:
         model = CustomUser
@@ -157,14 +84,7 @@ class CustomUserProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Updates the CustomUser instance with the provided data.
-
-        Args:
-            instance (CustomUser): The CustomUser instance to update.
-            validated_data (dict): The validated data for updating the user.
-
-        Returns:
-            CustomUser: The updated user instance.
+        Updates user profile and avatar.
         """
         return _update_customuser_instance_with_validated_data(
             instance=instance, 

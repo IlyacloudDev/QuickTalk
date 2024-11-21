@@ -9,16 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 def _validate_password_for_minimum_length_and_character_complexity(password):
     """
-    Validates the password for minimum length and character complexity.
-    
-    Args:
-        password (str): The password provided by the user.
-    
-    Raises:
-        ValidationError: If the password does not meet the required length or complexity.
-    
-    Returns:
-        str: The validated password.
+    Ensures password meets length and complexity requirements.
     """
     if len(password) < 8:
         raise ValidationError(_("Password must be at least 8 characters long."))
@@ -34,16 +25,7 @@ def _validate_password_for_minimum_length_and_character_complexity(password):
 
 def _validate_two_password_fields_match(data):
     """
-    Validates that the two password fields match.
-    
-    Args:
-        data (dict): The data containing the passwords.
-    
-    Raises:
-        serializers.ValidationError: If the passwords do not match.
-    
-    Returns:
-        dict: The validated data.
+    Checks if the two password fields match.
     """
     if data.get('password') != data.get('password2'):
         raise serializers.ValidationError({
@@ -55,13 +37,7 @@ def _validate_two_password_fields_match(data):
 
 def _create_new_customuser_instance_with_provided_data(phone_number, password):
     """
-    Creates a new CustomUser instance with the provided data.
-    
-    Args:
-        validated_data (dict): The validated data for creating the user.
-    
-    Returns:
-        CustomUser: The created user instance.
+    Creates a new CustomUser instance.
     """
     user = CustomUser(phone_number=phone_number)
     user.set_password(password)
@@ -71,16 +47,7 @@ def _create_new_customuser_instance_with_provided_data(phone_number, password):
 
 def _validate_phone_number_and_password_by_authenticating_user(phone_number, password):
     """
-    Validates the phone number and password by authenticating the user.
-    
-    Args:
-        data (dict): The data containing the phone number and password.
-    
-    Raises:
-        serializers.ValidationError: If the phone number or password is incorrect or not provided.
-    
-    Returns:
-        dict: The validated data with the authenticated user included.
+    Authenticates a user with the provided phone number and password.
     """
     if phone_number and password:
         user = authenticate(phone_number=phone_number, password=password)
@@ -94,14 +61,7 @@ def _validate_phone_number_and_password_by_authenticating_user(phone_number, pas
 
 def _update_customuser_instance_with_validated_data(instance, username, avatar):
     """
-    Updates the CustomUser instance with the validated data.
-    
-    Args:
-        instance (CustomUser): The user instance to be updated.
-        validated_data (dict): The validated data containing the fields to update.
-    
-    Returns:
-        CustomUser: The updated user instance.
+    Updates a CustomUser instance with the provided data.
     """
     instance.username = username
     user_own_avatar = avatar
