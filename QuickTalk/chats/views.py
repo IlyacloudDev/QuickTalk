@@ -3,60 +3,51 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
-from .serializers import CreateGroupChatSerializer, ChatsListSerializer, CreatePersonalChatSerializer, ChatDeleteSerializer, JoinToGroupChatSerializer
+from .serializers import (
+    CreateGroupChatSerializer,
+    ChatsListSerializer,
+    CreatePersonalChatSerializer,
+    ChatDeleteSerializer,
+    JoinToGroupChatSerializer,
+)
 from .models import Chat
 
 
 class CreateGroupChatAPIView(APIView):
     """
-    API View for creating a new group chat.
-
-    Only authenticated users are allowed to create group chats. 
-    The request must include the 'name' field. The chat creator is automatically 
-    added to the chat members list.
-
-    Methods:
-        post(request): Creates a new group chat.
-
-    Returns:
-        Response: Details of the created chat or validation errors.
+    Handles group chat creation by authenticated users.
     """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = CreateGroupChatSerializer(data=request.data, context={'request': request})
-        
         if serializer.is_valid():
             chat = serializer.save()
-            return Response({'detail': _('Group chat created successfully.'), 'chat_id': CreateGroupChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
+            return Response(
+                {
+                    'detail': _('Group chat created successfully.'),
+                    'chat_id': CreateGroupChatSerializer(chat).data
+                },
+                status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateGroupChatAPIView(APIView):
     """
-    API View for updating an existing group chat.
-
-    Only the creator of the group chat is allowed to update its details. 
-    The method ensures that only group chats can be updated and validates 
-    whether the user requesting the update is the chat creator.
-
-    Methods:
-        put(request, pk): Updates the group chat with the given ID (pk).
-
-    Returns:
-        Response: Updated chat data or appropriate error messages.
+    Allows group chat creators to update their chat details.
     """
     permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
-        pk = kwargs.get("pk", None)
+        pk = kwargs.get("pk")
         if not pk:
             return Response({"error": _("Method PUT not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             instance = Chat.objects.get(pk=pk)
             if instance.type != 'group':
                 return Response({"error": _("Method PUT not allowed for personal chat")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-            elif instance.created_by != request.user:
+            if instance.created_by != request.user:
                 return Response({"error": _("Method PUT not allowed to non-chat creator")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         except Chat.DoesNotExist:
             return Response({"error": _("Object does not exist.")}, status=status.HTTP_404_NOT_FOUND)
@@ -70,70 +61,44 @@ class UpdateGroupChatAPIView(APIView):
 
 class CreatePersonalChatAPIView(APIView):
     """
-    API View for creating a new personal chat between two users.
-
-    Users can create personal chats with other users. The system checks if a 
-    personal chat between the two users already exists before creating a new one.
-
-    Methods:
-        post(request): Creates a new personal chat between the authenticated user and the chosen user.
-
-    Returns:
-        Response: Details of the created personal chat or validation errors.
+    Enables users to create personal chats with others.
     """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = CreatePersonalChatSerializer(data=request.data, context={'request': request})
-        
         if serializer.is_valid():
             chat = serializer.save()
-            return Response({
-                'detail': _('Chat created successfully.'),
-                'chat_id': CreatePersonalChatSerializer(chat).data
-            }, status=status.HTTP_201_CREATED)
-        
+            return Response(
+                {
+                    'detail': _('Chat created successfully.'),
+                    'chat_id': CreatePersonalChatSerializer(chat).data
+                },
+                status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChatsListAPIView(APIView):
     """
-    API View for listing all chats that the authenticated user is a part of.
-
-    The chats are ordered by the date they were created in descending order.
-
-    Methods:
-        get(request): Retrieves the list of chats for the authenticated user.
-
-    Returns:
-        Response: List of chats the user is a part of.
+    Retrieves a list of chats the authenticated user is part of.
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        user = request.user
-        chats = Chat.objects.filter(users=user).order_by('-created_at')
+        chats = Chat.objects.filter(users=request.user).order_by('-created_at')
         serializer = ChatsListSerializer(chats, many=True, context={'request': request})
         return Response(serializer.data)
 
 
 class ChatDetailAPIView(APIView):
     """
-    API View for retrieving the details of a specific chat.
-
-    Allows authenticated users to get the details of a chat by its ID (pk). 
-    Validates if the chat exists.
-
-    Methods:
-        get(request, pk): Retrieves chat details.
-
-    Returns:
-        Response: Chat details or error if the chat does not exist.
+    Fetches details of a specific chat by its ID.
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        pk = kwargs.get("pk", None)
+        pk = kwargs.get("pk")
         if not pk:
             return Response({"error": _("Method GET not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
@@ -146,56 +111,27 @@ class ChatDetailAPIView(APIView):
 
 class GroupChatSearchAPIView(APIView):
     """
-    API view for searching group chats by name.
-
-    This endpoint allows authenticated users to search for group chats based on a substring match within the chat name.
-    If a search query is provided, it returns a list of group chats whose names contain the query string.
-    If no search query is given, an empty list is returned.
-
-    Returns:
-        - 200 OK: A JSON array of serialized group chat objects that match the search criteria.
-    
-    Query Parameters:
-        - query (str): The substring to search for within group chat names.
-
-    Permission:
-        - Only authenticated users are permitted to access this endpoint.
-    
-    Response Format:
-        - JSON array of group chat objects. Each object represents a group chat with details as per the `ChatsListSerializer`.
+    Searches group chats by name based on a substring query.
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         search_query = request.query_params.get('query', '')
-        if search_query:
-            group_chats = Chat.objects.filter(name__icontains=search_query, type="group")
-        else:
-            group_chats = Chat.objects.none()
-        
+        group_chats = Chat.objects.filter(name__icontains=search_query, type="group") if search_query else Chat.objects.none()
         serializer = ChatsListSerializer(group_chats, many=True, context={'request': request})
         return Response(serializer.data)
 
 
 class ChatDeleteAPIView(APIView):
     """
-    API View for deleting a specific chat.
-
-    Allows authenticated users to delete a chat by its ID (pk). 
-    Validates if the chat exists before deletion.
-
-    Methods:
-        delete(request, pk): Deletes the chat.
-
-    Returns:
-        Response: Success message upon successful deletion or error message if the chat does not exist.
+    Deletes a chat specified by its ID.
     """
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
-        pk = kwargs.get("pk", None)
+        pk = kwargs.get("pk")
         if not pk:
-             return Response({"error": _("Method DELETE not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"error": _("Method DELETE not allowed")}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             chat = Chat.objects.get(pk=pk)
         except Chat.DoesNotExist:
@@ -209,28 +145,14 @@ class ChatDeleteAPIView(APIView):
 
 class JoinToGroupChatAPIView(APIView):
     """
-    API view to handle requests for adding a user to a group chat.
-
-    This endpoint accepts a POST request with necessary data to add a user to a specified group chat.
-    The request data is validated by the `JoinToGroupChatSerializer`, ensuring that the provided information
-    meets the required criteria. If validation passes, the user is added to the group chat.
-
-    Permission:
-        - Only authenticated users are allowed to access this endpoint.
-
-    Raises:
-        - ValidationError: If the data fails to validate, an exception is raised, and a 400 response is returned.
-
-    Returns:
-        - 201 Created: When the user is successfully added to the chat, a success message is returned.
+    Adds a user to a specified group chat.
     """
-    
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        srlz = JoinToGroupChatSerializer(data=request.data)
-        srlz.is_valid(raise_exception=True)
-
-        return Response({
-            'detail': _('The user was successfully added to the chat.'),
-        }, status=status.HTTP_201_CREATED)
+        serializer = JoinToGroupChatSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {'detail': _('The user was successfully added to the chat.')},
+            status=status.HTTP_201_CREATED
+        )
