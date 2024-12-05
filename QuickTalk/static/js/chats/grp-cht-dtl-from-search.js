@@ -49,14 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 400) {
+                    alert("You has already joined in this chat. Redirecting...");
+                    window.location.href = window.LIST_API_CHATS;
+                }
+            })
             .then(data => {
-                if (data.detail === "The user has already joined this group chat.") {
-                    alert("You are already joined to this chat. Redirecting...");
+                if (data.detail) {
                     window.location.href = window.LIST_API_CHATS;
-                } else if (data.detail === "The user was successfully added to the chat.") {
-                    window.location.href = window.LIST_API_CHATS;
-                } 
+                }
             })
             .catch(error => {
                 console.error('Error joining group chat:', error);
