@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from chats.models import Chat
-from chats.exceptions import AlreadyJoinedChatException
 from users.models import CustomUser
 from django.utils.translation import gettext_lazy as _
 
@@ -101,13 +100,9 @@ def _validate_process_user_join_to_group_chat(data):
     """
     Validates and processes a user joining a group chat.
     """
-    try:
-        user = CustomUser.objects.get(id=data['user_id_to_join'])
-        chat = Chat.objects.get(id=data['chat_id_to_join'])
-    except (Chat.DoesNotExist, CustomUser.DoesNotExist):
-        raise serializers.ValidationError(_("Object does not exist."))
-
+    user = CustomUser.objects.get(id=data['user_id_to_join'])
+    chat = Chat.objects.get(id=data['chat_id_to_join'])
     if chat.users.filter(id=user.id).exists():
-        raise AlreadyJoinedChatException()
+        raise serializers.ValidationError(_('The user has already joined this group chat.'))
     chat.users.add(user)
     return data
