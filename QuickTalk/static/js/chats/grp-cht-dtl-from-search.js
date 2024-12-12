@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert("You has already joined in this chat. Redirecting...");
                     window.location.href = window.LIST_API_CHATS;
                 }
+                return response.json();
             })
             .then(data => {
                 if (data.detail) {
