@@ -155,11 +155,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
+REDIS_HOST = 'redis' if os.environ.get('DOCKER') else 'localhost'
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            'hosts': [(REDIS_HOST, 6379)],
         },
     },
 }
